@@ -1,0 +1,29 @@
+What is a Synchronous Error?
+
+A synchronous operation executes line by line. If an error occurs, execution stops immediately and the error is handled using try...catch.
+
+Examples:
+
+Reading a file using readFileSync()
+JSON parsing
+Mathematical operations
+Accessing invalid properties
+
+
+
+What is an Asynchronous Error?
+
+Asynchronous operations execute later and do not block the program.
+
+Examples:
+
+Reading files using readFile()
+Database operations
+API calls
+Network requests
+
+Errors are handled using:
+
+Callbacks
+Promises
+async/await
