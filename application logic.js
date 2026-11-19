@@ -143,3 +143,15 @@
 //  Entity file :
 // type script defianition of the database table structure. It defines the columns, their types, and any relationships.
 // Drizzle ORM uses it at runtime to build
+
+
+
+
+
+
+
+
+
+// -------------------- Antigravity url for connecting to omniroutes ------------------
+
+// http://127.0.0.1:20128/callback?state=vo4Sofh87S3lRS5oGxvv7s5udzs_bIiZ-Xj1HAyre2U&iss=https://accounts.google.com&code=4/0AUn6Hd8_DsN9IXGYLWvxumknfHoir_7v0YBeVGq12O-n42VD9s7ANzH6LHJxPn-q6jfozg&scope=email%20profile%20https://www.googleapis.com/auth/cloud-platform%20https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/cclog%20https://www.googleapis.com/auth/experimentsandconfigs%20openid&authuser=0&prompt=consent
