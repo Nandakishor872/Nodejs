@@ -105,7 +105,7 @@
 // ----------------------------------------   Interview model paper practise  -----------------------------
 // const express = require('express');
 // const app = express();
-// const port = 3000; 
+// const port = 3000;
 
 // app.get('/slow-api',async(req,res)=>{
 //   try{
@@ -143,7 +143,7 @@
 // fs.readFile('index.html','utf-8',(err,data)=>{
 //   if(err){
 //     console.log('inside the file error is etting ')
-//   } 
+//   }
 //   setImmediate(()=>{
 //     console.log('inside the file read')
 //   })
@@ -187,35 +187,106 @@
 // })
 
 // ------------------filtering the records based on the query params--------------------
-const express = require("express");
+// const express = require("express");
+// const app = express();
+// const port = 3000;
+
+// const users = [
+//     { id: 1, name: "Nanda", age: 25 },
+//     { id: 2, name: "Rahul", age: 30 },
+//     { id: 3, name: "Kiran", age: 35 },
+//     { id: 4, name: "Ravi", age: 40 },
+//     { id: 5, name: "Arjun", age: 45 }
+// ];
+
+// app.get("/users", (req, res) => {
+//     const { age } = req.query;
+//     let filteredUsers = users;
+
+//     if (age) {
+//         filteredUsers = users.filter(user => user.age === Number(age));
+//     }
+
+//     res.json({
+//         users: filteredUsers
+//     });
+// });
+
+// app.listen(port, () => {
+//     console.log(`Server is running at port ${port}`);
+// })
+
+
+
+
+// ------------------------ jwt concept ----------------------------
+const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+const { Pool } = require('pg');
+
 const app = express();
 const port = 3000;
 
-const users = [
-    { id: 1, name: "Nanda", age: 25 },
-    { id: 2, name: "Rahul", age: 30 },
-    { id: 3, name: "Kiran", age: 35 },
-    { id: 4, name: "Ravi", age: 40 },
-    { id: 5, name: "Arjun", age: 45 }
-];
+// Built-in body parsing & CORS
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: '*' }));
 
-app.get("/users", (req, res) => {
-    const { age } = req.query;
-    let filteredUsers = users;
+// Direct database connection configuration
+const db = new Pool({
+  host: 'localhost',
+  user: 'postgres',
+  password: 'your_password_here',
+  database: 'postgres',
+  port: 5432,
+  max: 10,
+});
 
-    if (age) {
-        filteredUsers = users.filter(user => user.age === Number(age));
+async function insertUser(username, hashedPassword) {
+  const query = `
+    INSERT INTO users (username, passwordhash)
+    VALUES ($1, $2)
+    RETURNING id, username, userregisteredat
+  `;
+  const result = await db.query(query, [username.trim(), hashedPassword]);
+  return result.rows[0];
+}
+
+app.get('/', (req, res) => {
+  res.send('Server is healthy');
+});
+
+app.post('/create', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = await insertUser(username, hashedPassword);
+
+    return res.status(201).json({
+      message: 'User created successfully',
+      user,
+    });
+  } catch (error) {
+    // PostgreSQL unique_violation error code
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'Username already taken' });
     }
 
-    res.json({
-        users: filteredUsers
-    });
+    console.error('Signup Error:', error);
+    return res.status(500).json({ error: 'Failed to create user' });
+  }
 });
 
 app.listen(port, () => {
-    console.log(`Server is running at port ${port}`);
-})
-
-
-
-
+  console.log(`Server is running on port ${port}`);
+});
