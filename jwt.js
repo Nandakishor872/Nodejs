@@ -1,76 +1,72 @@
-// // we are building the sign up functionality
+// we are building the sign up functionality
 
-// const express = require('express');
-// const cors = require('cors');
-// const bodyparser = require('body-parser');
-// const bcrypt = require('bcrypt');
-// const { Pool } = require('pg');
+const express = require('express');
+const cors = require('cors');
+const bodyparser = require('body-parser');
+const bcrypt = require('bcrypt');
+const { Pool } = require('pg');
 
-// const app = express();
-// const port = 3000;
+const app = express();
+const port = 3000;
 
-// app.use(express.json());
-// app.use(cors({ origin: '*' }));
-// app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors({ origin: '*' }));
+app.use(bodyparser.urlencoded({ extended: true }));
 
-// const db = new Pool({
-//     host: 'localhost',
-//     user: 'postgres',
-//     password: 'Nanda@872',
-//     database: 'postgres',
-//     port: 5432,
-//     max: 10,
-// });
+const db = new Pool({
+  host: 'localhost',
+  user: 'postgres',
+  password: 'Nanda@872',
+  database: 'postgres',
+  port: 5432,
+  max: 10,
+});
 
-// async function insertUser(username, hashedPassword) {
-//     const { rows: [{ next_id: nextId }] } = await db.query(
-//         'SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM users'
-//     );
+async function insertUser(username, hashedPassword) {
+  const {
+    rows: [{ next_id: nextId }],
+  } = await db.query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM users');
 
-//     const query = `
-//         INSERT INTO users (id, username, passwordhash, userregisteredat)
-//         VALUES ($1, $2, $3, $4)
-//         RETURNING id, username
-//     `;
+  const query = `
+        INSERT INTO users (id, username, passwordhash, userregisteredat)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, username
+    `;
 
-//     const values = [nextId, username, hashedPassword, new Date()];
+  const values = [nextId, username, hashedPassword, new Date()];
 
-//     const result = await db.query(query, values);
-//     return result.rows[0];
-// }
+  const result = await db.query(query, values);
+  return result.rows[0];
+}
 
-// app.get('/', (req, res) => {
-//     res.send('Hello world');
-// });
+app.get('/', (req, res) => {
+  res.send('Hello world');
+});
 
-// app.post('/create', async (req, res) => {
-//     const { username, password } = req.body;
+app.post('/create', async (req, res) => {
+  const { username, password } = req.body;
 
-//     if (!username || !password) {
-//         return res.status(400).send({ error: 'Username and password are required' });
-//     }
+  if (!username || !password) {
+    return res.status(400).send({ error: 'Username and password are required' });
+  }
 
-//     try {
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         const user = await insertUser(username, hashedPassword);
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await insertUser(username, hashedPassword);
 
-//         res.status(201).send({
-//             message: 'User created successfully',
-//             user,
-//         });
-//     } catch (error) {
-//         console.error('Signup Error:', error.message);
-//         res.status(500).send({ error: 'Failed to create user' });
-//     }
-// });
+    res.status(201).send({
+      message: 'User created successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('Signup Error:', error.message);
+    res.status(500).send({ error: 'Failed to create user' });
+  }
+});
 
-// app.listen(port, () => {
-//     console.log(`Server is running successfully on port ${port}`);
-// });
-
-
-
-
+app.listen(port, () => {
+  console.log(`Server is running successfully on port ${port}`);
+});
 
 // ------------------------------------web socket---------------------------------------------
 // server.js
@@ -99,9 +95,6 @@
 
 // console.log('WebSocket server is running on ws://localhost:8080');
 
-
-
-
 // ----------------------------------------   Interview model paper practise  -----------------------------
 // const express = require('express');
 // const app = express();
@@ -126,7 +119,6 @@
 //   console.log(`server is running at ${port}`)
 // })
 
-
 // -----------setTimeout setImmediate and process.nextTick--------------------
 // const fs  = require('fs');
 // function userDetails(user) {
@@ -148,7 +140,6 @@
 //     console.log('inside the file read')
 //   })
 // })
-
 
 // -------------------pagination ---------------
 // const express = require("express");
@@ -216,77 +207,74 @@
 //     console.log(`Server is running at port ${port}`);
 // })
 
-
-
-
 // ------------------------ jwt concept ----------------------------
-const express = require('express');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-const { Pool } = require('pg');
+// const express = require('express');
+// const cors = require('cors');
+// const bcrypt = require('bcrypt');
+// const { Pool } = require('pg');
 
-const app = express();
-const port = 3000;
+// const app = express();
+// const port = 3000;
 
-// Built-in body parsing & CORS
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: '*' }));
+// // Built-in body parsing & CORS
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(cors({ origin: '*' }));
 
-// Direct database connection configuration
-const db = new Pool({
-  host: 'localhost',
-  user: 'postgres',
-  password: 'your_password_here',
-  database: 'postgres',
-  port: 5432,
-  max: 10,
-});
+// // Direct database connection configuration
+// const db = new Pool({
+//   host: 'localhost',
+//   user: 'postgres',
+//   password: 'your_password_here',
+//   database: 'postgres',
+//   port: 5432,
+//   max: 10,
+// });
 
-async function insertUser(username, hashedPassword) {
-  const query = `
-    INSERT INTO users (username, passwordhash)
-    VALUES ($1, $2)
-    RETURNING id, username, userregisteredat
-  `;
-  const result = await db.query(query, [username.trim(), hashedPassword]);
-  return result.rows[0];
-}
+// async function insertUser(username, hashedPassword) {
+//   const query = `
+//     INSERT INTO users (username, passwordhash)
+//     VALUES ($1, $2)
+//     RETURNING id, username, userregisteredat
+//   `;
+//   const result = await db.query(query, [username.trim(), hashedPassword]);
+//   return result.rows[0];
+// }
 
-app.get('/', (req, res) => {
-  res.send('Server is healthy');
-});
+// app.get('/', (req, res) => {
+//   res.send('Server is healthy');
+// });
 
-app.post('/create', async (req, res) => {
-  const { username, password } = req.body;
+// app.post('/create', async (req, res) => {
+//   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
-  }
+//   if (!username || !password) {
+//     return res.status(400).json({ error: 'Username and password are required' });
+//   }
 
-  if (password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters' });
-  }
+//   if (password.length < 8) {
+//     return res.status(400).json({ error: 'Password must be at least 8 characters' });
+//   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await insertUser(username, hashedPassword);
+//   try {
+//     const hashedPassword = await bcrypt.hash(password, 12);
+//     const user = await insertUser(username, hashedPassword);
 
-    return res.status(201).json({
-      message: 'User created successfully',
-      user,
-    });
-  } catch (error) {
-    // PostgreSQL unique_violation error code
-    if (error.code === '23505') {
-      return res.status(409).json({ error: 'Username already taken' });
-    }
+//     return res.status(201).json({
+//       message: 'User created successfully',
+//       user,
+//     });
+//   } catch (error) {
+//     // PostgreSQL unique_violation error code
+//     if (error.code === '23505') {
+//       return res.status(409).json({ error: 'Username already taken' });
+//     }
 
-    console.error('Signup Error:', error);
-    return res.status(500).json({ error: 'Failed to create user' });
-  }
-});
+//     console.error('Signup Error:', error);
+//     return res.status(500).json({ error: 'Failed to create user' });
+//   }
+// });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
